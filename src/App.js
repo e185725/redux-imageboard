@@ -5,6 +5,7 @@ import Home from "./features/posts/Home"
 import { BrowserRouter as Router, Route,Routes } from 'react-router-dom';
 import { RegisterForm2} from "./features/posts/RegisterForm2"
 import Header from "./components/Header"
+import Post from "./features/posts/Post"
 function App() {
   return (
     <Router>
@@ -15,6 +16,7 @@ function App() {
       
         <Route path="/" element={<Home />} />
         <Route path="/new" element={<RegisterForm2 />} />
+        <Route path="/post/:postId/" element={<Post/>} />
       </Routes>
     </Router>
   );

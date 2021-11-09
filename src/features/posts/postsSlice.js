@@ -6,6 +6,7 @@ const initialState =
   {status:"idle",
    error: null,
    Items:[],
+   deleteUuid:''
   }
 
 
@@ -25,6 +26,19 @@ const addArticle = (title, body, image) => {
   }).catch(err => {
       console.log(err);
   });
+}
+
+
+const deleteArticle = async(uuid) => {
+  if(window.confirm('この記事を削除してよろしいですか？')) {
+      await axios.delete(`${process.env.REACT_APP_END_POINT}/api/articles/${uuid}/`)
+      .then(res => {
+          
+          //window.location.href="/";
+      }).catch(err => {
+          console.log(err);
+      });
+  }
 }
 
 
@@ -48,6 +62,22 @@ export const postAdded2 = createAsyncThunk(
   }
 )
 
+export const postDeleted = createAsyncThunk(
+  "posts/Deleted",
+  async (initialPost) => {
+    const uuid = initialPost
+     await deleteArticle(uuid)
+     return 
+  }
+)
+
+export const deleteUuidClear = createAsyncThunk(
+  "posts/uuidClear",
+  () => {
+    return
+  }
+)
+
 const postsSlice = createSlice({
   name: 'posts',
   initialState,
@@ -57,6 +87,7 @@ const postsSlice = createSlice({
       state.status = "idle"
       //state.posts.push(action.payload)
     },
+
   },
   extraReducers:(builder) => {
     builder
@@ -75,10 +106,22 @@ const postsSlice = createSlice({
       state.status = "idle"
       console.log(state.status)
     })
+    .addCase(postDeleted.pending,(state,action) => {
+      state.status = "loading"
+      state.deleteUuid=action.meta.arg
+    })
+    .addCase(postDeleted.fulfilled,(state,action) => {
+      state.status = "idle"
+      
+      console.log(action)
+    })
+    .addCase(deleteUuidClear.fulfilled,(state,action) => {
+      state.deleteUuid = ""
+    })
     
   },
 })
 
-export const { postAdded } = postsSlice.actions
+export const { postAdded, } = postsSlice.actions
 
 export default postsSlice.reducer
